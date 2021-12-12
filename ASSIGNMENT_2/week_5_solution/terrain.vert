@@ -30,17 +30,9 @@ void main()
 		{
 			diffuse_colour = vec4(0.2, 0.2, 1.0, 1.0);
 		}
-		else if (position.y < 1.0)
-		{
-			diffuse_colour = vec4(0.0, 0.6, 0.2, 1.0);
-		}
-		else if (position.y < 2.0)
-		{
-			diffuse_colour = vec4(0.6, 0.4, 0.2, 1.0);
-		}
 		else
 		{
-			diffuse_colour = vec4(0.9, 0.8, 0.9, 1.0);
+			diffuse_colour = vec4(1.0, 1.0, 1.0, 1.0);
 		}
 	}
 

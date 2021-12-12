@@ -138,7 +138,7 @@ void display()
 	/* Make the compiled shader program current */
 	glUseProgram(program);
 
-	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
+	// Projection matrix : 45ï¿½ Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 	mat4 projection = perspective(radians(30.0f), aspect_ratio, 0.1f, 100.0f);
 
 	// Camera matrix

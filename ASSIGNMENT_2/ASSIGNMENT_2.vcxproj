@@ -29,6 +29,8 @@
     <ClCompile Include="week_5_solution\wrapper_glfw.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="week_5_solution\fraglight_fog.frag" />
+    <None Include="week_5_solution\fraglight_fog.vert" />
     <None Include="week_5_solution\lab5solution.frag" />
     <None Include="week_5_solution\lab5solution.vert" />
     <None Include="week_5_solution\object_loader.frag" />

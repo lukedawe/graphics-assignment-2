@@ -39,10 +39,14 @@ if you prefer */
 #include "tiny_loader.h"
 #include "sphere_tex.h"
 
+// include file to make terrain
+#include "terrain_object.h"
+
 
 GLuint program;		/* Identifier for the main shader prgoram */
 GLuint points_program;		/* Identifier for the point_sprites shader prgoram */
 GLuint obj_ldr_program;
+GLuint terrain_program;
 
 GLuint vao;			/* Vertex array (Containor) object. This is the index of the VAO that will be the container for
 					   our buffer objects */
@@ -52,7 +56,7 @@ GLuint colourmode;	/* Index of a uniform to switch the colour mode in the vertex
 					  your vertex shader. */
 
 /* Position and view globals */
-GLfloat angle_x, angle_inc_x, x, scaler, z, y;
+GLfloat angle_x, angle_inc_x, x, scaler, z, y, tree_y, cube_y;
 GLfloat angle_y, angle_inc_y, angle_z, angle_inc_z;
 GLuint drawmode;			// Defines drawing mode of sphere as points, lines or filled polygons
 GLuint numlats, numlongs;	//Define the resolution of the sphere object
@@ -87,6 +91,13 @@ Sphere aSphere(false);		// Create our sphere with no texture coordinates because
 
 /* Define textureID*/
 GLuint texID;
+
+// terrain objects
+terrain_object* heightfield;
+int octaves;
+GLfloat perlin_scale, perlin_frequency;
+GLfloat land_size;
+GLfloat sealevel = 0;
 
 
 using namespace std;
@@ -165,6 +176,16 @@ void init(GLWrapper* glw)
 	// Create the vertex array object and make it current
 	glBindVertexArray(vao);
 
+	/* Create the heightfield object */
+	octaves = 2;
+	perlin_scale = 2.f;
+	perlin_frequency = 1.f;
+	land_size = 40.f;
+	heightfield = new terrain_object(octaves, perlin_frequency, perlin_scale);
+	heightfield->createTerrain(200, 200, land_size, land_size);
+	//heightfield->setColour(vec3(1, 1, 1));
+	//heightfield->setColourBasedOnHeight();
+	heightfield->createObject();
 
 
 	// Creater the sphere (params are num_lats and num_longs)
@@ -181,6 +202,7 @@ void init(GLWrapper* glw)
 		program = glw->LoadShader("..\\ASSIGNMENT_2\\week_5_solution\\lab5solution.vert", "..\\ASSIGNMENT_2\\week_5_solution\\lab5solution.frag");
 		points_program = glw->LoadShader("..\\ASSIGNMENT_2\\week_5_solution\\point_sprites.vert", "..\\ASSIGNMENT_2\\week_5_solution\\point_sprites_analytic.frag");
 		obj_ldr_program = glw->LoadShader("..\\ASSIGNMENT_2\\week_5_solution\\object_loader.vert", "..\\ASSIGNMENT_2\\week_5_solution\\object_loader.frag");
+		terrain_program = glw->LoadShader("..\\ASSIGNMENT_2\\week_5_solution\\terrain.vert", "..\\ASSIGNMENT_2\\week_5_solution\\terrain.frag");
 //		points_program = glw->LoadShader("point_sprites.vert", "point_sprites.frag");
 	}
 	catch (exception& e)
@@ -202,13 +224,17 @@ void init(GLWrapper* glw)
 	viewID = glGetUniformLocation(program, "view");
 	projectionID = glGetUniformLocation(program, "projection");
 
+	// Place the present object on the terrain at its current start position
+	cube_y = heightfield->heightAtPosition(1.f, 1.f);
+	tree_y = heightfield->heightAtPosition(x, z);
+
 	/* Define uniforms to send to point sprites program shaders */
 	points_modelID = glGetUniformLocation(points_program, "model");
 	points_sizeID = glGetUniformLocation(points_program, "size");
 	points_viewID = glGetUniformLocation(points_program, "view");
 	points_projectionID = glGetUniformLocation(points_program, "projection");
 
-	// Call our texture loader function to load two textures.#
+	// Call our texture loader function to load two textures.
 	// Note that our texture loader generates the texID and is passed as a var parameter
 	// The third parameter is a boolean that with generater mipmaps if true
 
@@ -285,9 +311,6 @@ void display()
 	/* Enable depth test  */
 	glEnable(GL_DEPTH_TEST);
 
-	/* Make the main compiled shader program current */
-	glUseProgram(program);
-
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 	mat4 projection = perspective(radians(30.0f), aspect_ratio, 0.1f, 100.0f);
 
@@ -298,10 +321,6 @@ void display()
 		vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
 		);
 
-	// Send our common uniforms variables to the currently bound shader,
-	glUniform1ui(colourmodeID, colourmode);
-	glUniformMatrix4fv(viewID, 1, GL_FALSE, &view[0][0]);
-	glUniformMatrix4fv(projectionID, 1, GL_FALSE, &projection[0][0]);
 	
 
 	// Define the model transformation stack
@@ -315,12 +334,43 @@ void display()
 	model.top() = rotate(model.top(), -radians(angle_z), vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
 	
 																		 // Send our uniforms variables to the currently bound shader,
-	
 
-	// Draw our cube
+
+
+
+	// Draw a terrain object with a different texture
 	model.push(model.top());
 	{
-		//model.top() = translate(model.top(), vec3(x + 0.5, y, z));
+		// Now draw our particles
+		/* switch to the point sprites shader program current */
+		glUseProgram(terrain_program);
+
+		// Send our common uniforms variables to the currently bound shader,
+		glUniform1ui(colourmodeID, colourmode);
+		glUniformMatrix4fv(viewID, 1, GL_FALSE, &view[0][0]);
+		glUniformMatrix4fv(projectionID, 1, GL_FALSE, &projection[0][0]);
+
+		glUniformMatrix4fv(modelID, 1, GL_FALSE, &model.top()[0][0]);
+
+		// Draw our quad
+		heightfield->drawObject(drawmode);
+	}
+	model.pop();
+
+
+	/* Make the main compiled shader program current */
+	glUseProgram(program);
+
+	// Send our common uniforms variables to the currently bound shader,
+	glUniform1ui(colourmodeID, colourmode);
+	glUniformMatrix4fv(viewID, 1, GL_FALSE, &view[0][0]);
+	glUniformMatrix4fv(projectionID, 1, GL_FALSE, &projection[0][0]);
+	
+
+	// Draw our tree
+	model.push(model.top());
+	{
+		model.top() = translate(model.top(), vec3(x, tree_y, z));
 
 		/* Draw our object with texture */
 		glBindTexture(GL_TEXTURE_2D, texID);
@@ -352,11 +402,15 @@ void display()
 	}
 	model.pop();
 
-	// Draw a Quad object with a different texture
+	// Draw a cube object with a different texture
 	model.push(model.top());
 	{
-		model.top() = translate(model.top(), vec3(0, 0, 0));
-		model.top() = scale(model.top(), vec3(scaler*2.f, scaler*2.f, scaler*2.f));//scale equally in all axis
+		model.top() = translate(model.top(), vec3(x, tree_y + 0.1f, z));	// +0.1 t0 place on the terrain
+		model.top() = scale(model.top(), vec3(0.1f, 0.1f, 0.1f));//scale equally in all axis
+		model.top() = rotate(model.top(), -radians(angle_x - 50.f), vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
+		model.top() = rotate(model.top(), -radians(angle_y), vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
+		model.top() = rotate(model.top(), -radians(angle_z), vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
+
 		glUniformMatrix4fv(modelID, 1, GL_FALSE, &model.top()[0][0]);
 
 		// Bind the ground texture, change texture parameter to make use of mipmap
@@ -367,6 +421,9 @@ void display()
 		cube.drawCube(drawmode);
 	}
 	model.pop();
+
+
+
 
 
 	// Now draw our particles

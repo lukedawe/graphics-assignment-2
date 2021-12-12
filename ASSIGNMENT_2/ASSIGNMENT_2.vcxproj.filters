@@ -50,6 +50,8 @@
     <None Include="week_5_solution\object_loader.vert" />
     <None Include="week_5_solution\terrain.frag" />
     <None Include="week_5_solution\terrain.vert" />
+    <None Include="week_5_solution\fraglight_fog.frag" />
+    <None Include="week_5_solution\fraglight_fog.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="week_5_solution\points.h">
