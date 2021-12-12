@@ -43,6 +43,15 @@ if you prefer */
 #include "terrain_object.h"
 
 
+GLuint colourmode;	/* Index of a uniform to switch the colour mode in the vertex shader
+					  I've included this to show you how to pass in an unsigned integer into
+					  your vertex shader. */
+GLuint emitmode;
+
+GLuint fogmode;		/* Cycle between different fog equations */
+GLfloat light_x, light_y, light_z;
+
+
 GLuint program;		/* Identifier for the main shader prgoram */
 GLuint points_program;		/* Identifier for the point_sprites shader prgoram */
 GLuint obj_ldr_program;
@@ -51,9 +60,6 @@ GLuint terrain_program;
 GLuint vao;			/* Vertex array (Containor) object. This is the index of the VAO that will be the container for
 					   our buffer objects */
 
-GLuint colourmode;	/* Index of a uniform to switch the colour mode in the vertex shader
-					  I've included this to show you how to pass in an unsigned integer into
-					  your vertex shader. */
 
 /* Position and view globals */
 GLfloat angle_x, angle_inc_x, x, scaler, z, y, tree_y, cube_y;
@@ -64,7 +70,13 @@ GLuint numlats, numlongs;	//Define the resolution of the sphere object
 /* Uniforms*/
 GLuint modelID, viewID, projectionID, colourmodeID; // uniforms for lighting shaders
 GLuint points_modelID, points_viewID, points_projectionID, points_sizeID; // Uniforms for the points shaders
- 
+GLuint lightposID, normalmatrixID;
+GLuint emitmodeID, fogmodeID;
+
+
+/* Uniforms*/
+GLuint terrain_modelID, terrain_viewID, terrain_projectionID, terrain_colourmodeID; // uniforms for lighting shaders
+
 
 GLfloat aspect_ratio;		/* Aspect ratio of the window defined in the reshape callback*/
 GLuint numspherevertices;
@@ -102,6 +114,10 @@ GLfloat sealevel = 0;
 
 using namespace std;
 using namespace glm;
+
+
+// Define fogmode strings to output to screen
+string fog_mode_desc[] = { "off", "linear", "exp", "exp2" };
 
 
 bool load_texture(const char* filename, GLuint& texID, bool bGenMipmaps)
@@ -169,6 +185,9 @@ void init(GLWrapper* glw)
 	colourmode = 0;
 	numlats = 100;		// Number of latitudes in our sphere
 	numlongs = 100;		// Number of longitudes in our sphere
+	emitmode = 0;
+	fogmode = 0;
+	light_x = 0; light_y = 0; light_z = 0;
 
 	// Generate index (name) for one vertex array object
 	glGenVertexArrays(1, &vao);
@@ -201,7 +220,6 @@ void init(GLWrapper* glw)
 	{
 		program = glw->LoadShader("..\\ASSIGNMENT_2\\week_5_solution\\lab5solution.vert", "..\\ASSIGNMENT_2\\week_5_solution\\lab5solution.frag");
 		points_program = glw->LoadShader("..\\ASSIGNMENT_2\\week_5_solution\\point_sprites.vert", "..\\ASSIGNMENT_2\\week_5_solution\\point_sprites_analytic.frag");
-		obj_ldr_program = glw->LoadShader("..\\ASSIGNMENT_2\\week_5_solution\\object_loader.vert", "..\\ASSIGNMENT_2\\week_5_solution\\object_loader.frag");
 		terrain_program = glw->LoadShader("..\\ASSIGNMENT_2\\week_5_solution\\terrain.vert", "..\\ASSIGNMENT_2\\week_5_solution\\terrain.frag");
 //		points_program = glw->LoadShader("point_sprites.vert", "point_sprites.frag");
 	}
@@ -223,16 +241,28 @@ void init(GLWrapper* glw)
 	colourmodeID = glGetUniformLocation(program, "colourmode");
 	viewID = glGetUniformLocation(program, "view");
 	projectionID = glGetUniformLocation(program, "projection");
+	emitmodeID = glGetUniformLocation(program, "emitmode");
+	lightposID = glGetUniformLocation(program, "lightpos");
+	normalmatrixID = glGetUniformLocation(program, "normalmatrix");
+	fogmodeID = glGetUniformLocation(program, "fogmode");
 
-	// Place the present object on the terrain at its current start position
-	cube_y = heightfield->heightAtPosition(1.f, 1.f);
-	tree_y = heightfield->heightAtPosition(x, z);
+	/* Define uniforms to send to main program shaders */
+	terrain_modelID = glGetUniformLocation( terrain_program, "model");
+	terrain_colourmodeID = glGetUniformLocation(terrain_program, "colourmode");
+	terrain_viewID = glGetUniformLocation(terrain_program, "view");
+	terrain_projectionID = glGetUniformLocation(terrain_program, "projection");
 
 	/* Define uniforms to send to point sprites program shaders */
 	points_modelID = glGetUniformLocation(points_program, "model");
 	points_sizeID = glGetUniformLocation(points_program, "size");
 	points_viewID = glGetUniformLocation(points_program, "view");
 	points_projectionID = glGetUniformLocation(points_program, "projection");
+
+	// Place the present object on the terrain at its current start position
+	cube_y = heightfield->heightAtPosition(1.f, 1.f);
+	tree_y = heightfield->heightAtPosition(x, z);
+
+	
 
 	// Call our texture loader function to load two textures.
 	// Note that our texture loader generates the texID and is passed as a var parameter
@@ -321,7 +351,6 @@ void display()
 		vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
 		);
 
-	
 
 	// Define the model transformation stack
 	stack<mat4> model;
@@ -335,14 +364,11 @@ void display()
 	
 																		 // Send our uniforms variables to the currently bound shader,
 
-
-
-
-	// Draw a terrain object with a different texture
+	// Draw our tree
 	model.push(model.top());
 	{
 		// Now draw our particles
-		/* switch to the point sprites shader program current */
+		/* switch to the terrain shader program current */
 		glUseProgram(terrain_program);
 
 		// Send our common uniforms variables to the currently bound shader,
@@ -352,10 +378,23 @@ void display()
 
 		glUniformMatrix4fv(modelID, 1, GL_FALSE, &model.top()[0][0]);
 
+		// Enable gl_PointSize
+		glEnable(GL_PROGRAM_POINT_SIZE);
+		/* Enable Blending for the analytic point sprite */
+		glEnable(GL_BLEND);
+
 		// Draw our quad
 		heightfield->drawObject(drawmode);
 	}
-	model.pop();
+
+
+
+	// Define the normal matrix
+	mat3 normalmatrix = transpose(inverse(mat3(view * model.top())));
+
+	// Define the light position and transform by the view matrix
+	vec4 lightpos = view * vec4(light_x, light_y, light_z, 1.0);
+
 
 
 	/* Make the main compiled shader program current */
@@ -365,12 +404,23 @@ void display()
 	glUniform1ui(colourmodeID, colourmode);
 	glUniformMatrix4fv(viewID, 1, GL_FALSE, &view[0][0]);
 	glUniformMatrix4fv(projectionID, 1, GL_FALSE, &projection[0][0]);
+	glUniform1ui(emitmodeID, emitmode);
+	glUniform4fv(lightposID, 1, value_ptr(lightpos));
+	glUniformMatrix3fv(normalmatrixID, 1, GL_FALSE, &normalmatrix[0][0]);
+	glUniform1ui(fogmodeID, fogmode);
+
+
+
+
 	
 
 	// Draw our tree
 	model.push(model.top());
 	{
 		model.top() = translate(model.top(), vec3(x, tree_y, z));
+		normalmatrix = transpose(inverse(mat3(view * model.top())));
+		glUniformMatrix3fv(normalmatrixID, 1, GL_FALSE, &normalmatrix[0][0]);
+
 
 		/* Draw our object with texture */
 		glBindTexture(GL_TEXTURE_2D, texID);
@@ -507,6 +557,14 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 	{
 		drawmode ++;
 		if (drawmode > 2) drawmode = 0;
+	}
+
+	/* Cycle between fogmodes */
+	/* Switch between the vertex lighting shaders and the fragment shader */
+	if (key == 'F' && action != GLFW_PRESS)
+	{
+		fogmode == 3 ? fogmode = 0 : fogmode++;
+		cout << "Fogmode: " << fog_mode_desc[fogmode] << endl;
 	}
 
 	/* Point sprite animation parameters */

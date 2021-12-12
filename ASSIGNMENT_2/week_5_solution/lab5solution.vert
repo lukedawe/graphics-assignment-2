@@ -17,14 +17,23 @@ uniform uint colourmode;
 
 // Output the vertex colour - to be rasterized into pixel fragments
 out vec4 fcolour;
-
 // Output the  texture coordinate - just pass it through
 out vec2 ftexcoord;
+// Outputs to send to the fragment shader
+out vec3 fnormal;
+out vec3 flightdir, fposition;
+out vec4 fdiffusecolour;
+
 vec4 ambient = vec4(0.2, 0.2,0.2,1.0);
 vec3 light_dir = vec3(0.0, 0.0, 10.0);
+// These are the uniforms that are defined in the application
+uniform mat3 normalmatrix;
+uniform vec4 lightpos;
 
 void main()
 {
+	vec3 light_pos3 = lightpos.xyz;		
+
 	vec4 specular_colour = vec4(1.0,1.0,1.0,1.0);
 	vec4 diffuse_colour = vec4(0.5,0.5,0,1.0);
 	vec4 position_h = vec4(position, 1.0);
@@ -57,5 +66,12 @@ void main()
 
 	// Pass through the texture coordinate
 	ftexcoord = texcoord;
+
+	fposition = (mv_matrix * position_h).xyz;			// Modify the vertex position (x, y, z, w) by the model-view transformation
+	fnormal = normalize(normalmatrix * normal);	// Modify the normals by the normal-matrix (i.e. to model-view (or eye) coordinates )
+	flightdir = light_pos3 - fposition;				// Calculate the vector from the light position to the vertex in eye space
+
+	// Calculate the vertex position in projectin space and output to the pipleline using the reserved variable gl_Position
+	gl_Position = (projection * view * model) * position_h;
 }
 
