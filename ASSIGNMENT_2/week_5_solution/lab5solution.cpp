@@ -378,10 +378,6 @@ void display()
 
 		glUniformMatrix4fv(modelID, 1, GL_FALSE, &model.top()[0][0]);
 
-		// Enable gl_PointSize
-		glEnable(GL_PROGRAM_POINT_SIZE);
-		/* Enable Blending for the analytic point sprite */
-		glEnable(GL_BLEND);
 
 		// Draw our quad
 		heightfield->drawObject(drawmode);
