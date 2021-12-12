@@ -36,6 +36,9 @@
     <ClCompile Include="week_5_solution\tiny_loader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="week_5_solution\terrain_object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="week_5_solution\lab5solution.frag" />
@@ -45,6 +48,8 @@
     <None Include="week_5_solution\point_sprites_analytic.frag" />
     <None Include="week_5_solution\object_loader.frag" />
     <None Include="week_5_solution\object_loader.vert" />
+    <None Include="week_5_solution\terrain.frag" />
+    <None Include="week_5_solution\terrain.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="week_5_solution\points.h">
@@ -63,6 +68,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="week_5_solution\tiny_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="week_5_solution\terrain_object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

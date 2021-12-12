@@ -286,7 +286,7 @@ void display()
 	glEnable(GL_DEPTH_TEST);
 
 	/* Make the main compiled shader program current */
-	glUseProgram(obj_ldr_program);
+	glUseProgram(program);
 
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 	mat4 projection = perspective(radians(30.0f), aspect_ratio, 0.1f, 100.0f);
@@ -364,7 +364,7 @@ void display()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 		// Draw our quad
-		quad.drawQuad(drawmode);
+		cube.drawCube(drawmode);
 	}
 	model.pop();
 

@@ -24,6 +24,7 @@
     <ClCompile Include="week_5_solution\points.cpp" />
     <ClCompile Include="week_5_solution\quad_tex.cpp" />
     <ClCompile Include="week_5_solution\sphere_tex.cpp" />
+    <ClCompile Include="week_5_solution\terrain_object.cpp" />
     <ClCompile Include="week_5_solution\tiny_loader.cpp" />
     <ClCompile Include="week_5_solution\wrapper_glfw.cpp" />
   </ItemGroup>
@@ -35,12 +36,15 @@
     <None Include="week_5_solution\point_sprites.frag" />
     <None Include="week_5_solution\point_sprites.vert" />
     <None Include="week_5_solution\point_sprites_analytic.frag" />
+    <None Include="week_5_solution\terrain.frag" />
+    <None Include="week_5_solution\terrain.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="week_5_solution\cube_tex.h" />
     <ClInclude Include="week_5_solution\points.h" />
     <ClInclude Include="week_5_solution\quad_tex.h" />
     <ClInclude Include="week_5_solution\sphere_tex.h" />
+    <ClInclude Include="week_5_solution\terrain_object.h" />
     <ClInclude Include="week_5_solution\tiny_loader.h" />
     <ClInclude Include="week_5_solution\wrapper_glfw.h" />
   </ItemGroup>
