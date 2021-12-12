@@ -398,10 +398,6 @@ void display()
 	glUniform1ui(fogmodeID, fogmode);
 
 
-
-
-	
-
 	// Draw our tree
 	model.push(model.top());
 	{
