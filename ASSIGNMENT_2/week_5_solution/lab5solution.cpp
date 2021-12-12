@@ -99,7 +99,6 @@ Cube cube(true);
 Quad quad(true);
 
 TinyObjLoader tiny_obj;		// This is an instance of our tiny object loader with texture
-Sphere aSphere(false);		// Create our sphere with no texture coordinates because they aren't handled in the shaders for this example
 
 /* Define textureID*/
 GLuint texID;
@@ -185,6 +184,8 @@ void init(GLWrapper* glw)
 	colourmode = 0;
 	numlats = 100;		// Number of latitudes in our sphere
 	numlongs = 100;		// Number of longitudes in our sphere
+
+	// for per-fragment lighting
 	emitmode = 0;
 	fogmode = 0;
 	light_x = 0; light_y = 0; light_z = 0;
@@ -202,13 +203,8 @@ void init(GLWrapper* glw)
 	land_size = 40.f;
 	heightfield = new terrain_object(octaves, perlin_frequency, perlin_scale);
 	heightfield->createTerrain(200, 200, land_size, land_size);
-	//heightfield->setColour(vec3(1, 1, 1));
-	//heightfield->setColourBasedOnHeight();
 	heightfield->createObject();
 
-
-	// Creater the sphere (params are num_lats and num_longs)
-	aSphere.makeSphere(60, 60);
 
 	/* create the sphere and cube objects */
 	sphere.makeSphere(numlats, numlongs);
@@ -233,7 +229,6 @@ void init(GLWrapper* glw)
 
 	/* Load and create our object*/
 	tiny_obj.load_obj("..\\ASSIGNMENT_2\\week_5_solution\\tree.obj");
-
 	load_texture("..\\ASSIGNMENT_2\\week_5_solution\\grass.jpg", texID, false);
 
 	/* Define uniforms to send to main program shaders */
@@ -247,7 +242,7 @@ void init(GLWrapper* glw)
 	fogmodeID = glGetUniformLocation(program, "fogmode");
 
 	/* Define uniforms to send to main program shaders */
-	terrain_modelID = glGetUniformLocation( terrain_program, "model");
+	terrain_modelID = glGetUniformLocation(terrain_program, "model");
 	terrain_colourmodeID = glGetUniformLocation(terrain_program, "colourmode");
 	terrain_viewID = glGetUniformLocation(terrain_program, "view");
 	terrain_projectionID = glGetUniformLocation(terrain_program, "projection");
@@ -262,7 +257,6 @@ void init(GLWrapper* glw)
 	cube_y = heightfield->heightAtPosition(1.f, 1.f);
 	tree_y = heightfield->heightAtPosition(x, z);
 
-	
 
 	// Call our texture loader function to load two textures.
 	// Note that our texture loader generates the texID and is passed as a var parameter
@@ -375,9 +369,7 @@ void display()
 		glUniform1ui(colourmodeID, colourmode);
 		glUniformMatrix4fv(viewID, 1, GL_FALSE, &view[0][0]);
 		glUniformMatrix4fv(projectionID, 1, GL_FALSE, &projection[0][0]);
-
 		glUniformMatrix4fv(modelID, 1, GL_FALSE, &model.top()[0][0]);
-
 
 		// Draw our quad
 		heightfield->drawObject(drawmode);
