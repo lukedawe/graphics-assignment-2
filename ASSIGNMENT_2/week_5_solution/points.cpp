@@ -5,6 +5,7 @@
 
 #include "points.h"
 #include "glm/gtc/random.hpp"
+#include <random>
 
 /* Constructor, set initial parameters*/
 points::points(GLuint number, GLfloat dist, GLfloat sp)
@@ -37,9 +38,15 @@ void  points::create()
 	/* Define random position and velocity */
 	for (int i = 0; i < numpoints; i++)
 	{
-		vertices[i] = glm::ballRand(1.f);
-		colours[i] = glm::ballRand(1.f);
-		velocity[i] = glm::vec3(glm::ballRand(glm::linearRand(0.0, 0.01)));
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_real_distribution<> disxz(-20.0, 20.0);
+		std::uniform_real_distribution<> disy(-20.0, 20.0);
+		std::uniform_real_distribution<> disv(-0.005, -0.00025);
+
+		vertices[i] = glm::vec3(disxz(gen), disy(gen), disxz(gen));
+		colours[i] = glm::vec3(1.f, 1.f, 1.f);
+		velocity[i] = glm::vec3(0.f, disv(gen), 0.f);
 	}
 
 	/* Create the vertex buffer object */
@@ -73,20 +80,23 @@ void points::draw()
 
 void points::animate()
 {
+
 	for (int i = 0; i < numpoints; i++)
 	{
 		// Add velocity to the vertices 
 		vertices[i] += velocity[i];
 
 		// Calculate distance to the origin
-		GLfloat dist = glm::length(vertices[i]);
+		GLfloat dist = vertices[i].y;
 
 		// If we are near the origin then we introduce a new random direction
-		if (dist < 0.01f) velocity[i] = glm::vec3(glm::ballRand(glm::linearRand(0.0, 0.02)));
+		if (dist < 0.01f) vertices[i].y = 20.f;
 
 		// If we are too far away then change direction back to the origin
-		if (dist > maxdist) velocity[i] = -vertices[i] / 500.f * speed;
+		//if (dist > 0.01f) velocity[i].y = -vertices[i].y / 500.f * speed;
+		//if (dist > 0.01f) vertices[i].y = vertices[i].y - 0.1f;
 	}
+
 
 	// Update the vertex buffer data
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);

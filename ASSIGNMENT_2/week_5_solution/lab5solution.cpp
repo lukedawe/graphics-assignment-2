@@ -424,14 +424,14 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
-	if (key == 'Q') angle_inc_x -= 0.05f;
-	if (key == 'W') angle_inc_x += 0.05f;
-	if (key == 'E') angle_inc_y -= 0.05f;
-	if (key == 'R') angle_inc_y += 0.05f;
+	if (key == 'W') angle_inc_x -= 0.05f;
+	if (key == 'S') angle_inc_x += 0.05f;
+	if (key == 'A') angle_inc_y -= 0.05f;
+	if (key == 'D') angle_inc_y += 0.05f;
 	if (key == 'T') angle_inc_z -= 0.05f;
 	if (key == 'Y') angle_inc_z += 0.05f;
-	if (key == 'A') scaler -= 0.02f;
-	if (key == 'S') scaler += 0.02f;
+	if (key == '-') scaler -= 0.02f;
+	if (key == '=') scaler += 0.02f;
 	if (key == 'Z') x -= 0.05f;
 	if (key == 'X') x += 0.05f;
 	if (key == 'C') y -= 0.05f;
