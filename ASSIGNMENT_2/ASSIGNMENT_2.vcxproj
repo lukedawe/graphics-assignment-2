@@ -24,14 +24,14 @@
     <ClCompile Include="week_5_solution\points.cpp" />
     <ClCompile Include="week_5_solution\quad_tex.cpp" />
     <ClCompile Include="week_5_solution\sphere_tex.cpp" />
-    <ClCompile Include="week_5_solution\tiny_loader_texture.cpp" />
+    <ClCompile Include="week_5_solution\tiny_loader.cpp" />
     <ClCompile Include="week_5_solution\wrapper_glfw.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="week_5_solution\lab5solution.frag" />
     <None Include="week_5_solution\lab5solution.vert" />
-    <None Include="week_5_solution\object_loader_texture.frag" />
-    <None Include="week_5_solution\object_loader_texture.vert" />
+    <None Include="week_5_solution\object_loader.frag" />
+    <None Include="week_5_solution\object_loader.vert" />
     <None Include="week_5_solution\point_sprites.frag" />
     <None Include="week_5_solution\point_sprites.vert" />
     <None Include="week_5_solution\point_sprites_analytic.frag" />
@@ -41,7 +41,7 @@
     <ClInclude Include="week_5_solution\points.h" />
     <ClInclude Include="week_5_solution\quad_tex.h" />
     <ClInclude Include="week_5_solution\sphere_tex.h" />
-    <ClInclude Include="week_5_solution\tiny_loader_texture.h" />
+    <ClInclude Include="week_5_solution\tiny_loader.h" />
     <ClInclude Include="week_5_solution\wrapper_glfw.h" />
   </ItemGroup>
   <ItemGroup>

@@ -36,7 +36,7 @@ if you prefer */
 #include "points.h"
 
 // Include our sphere and object loader classes
-#include "tiny_loader_texture.h"
+#include "tiny_loader.h"
 #include "sphere_tex.h"
 
 
@@ -180,7 +180,7 @@ void init(GLWrapper* glw)
 	{
 		program = glw->LoadShader("..\\ASSIGNMENT_2\\week_5_solution\\lab5solution.vert", "..\\ASSIGNMENT_2\\week_5_solution\\lab5solution.frag");
 		points_program = glw->LoadShader("..\\ASSIGNMENT_2\\week_5_solution\\point_sprites.vert", "..\\ASSIGNMENT_2\\week_5_solution\\point_sprites_analytic.frag");
-		obj_ldr_program = glw->LoadShader("..\\ASSIGNMENT_2\\week_5_solution\\object_loader_texture.vert", "..\\ASSIGNMENT_2\\week_5_solution\\object_loader_texture.frag");
+		obj_ldr_program = glw->LoadShader("..\\ASSIGNMENT_2\\week_5_solution\\object_loader.vert", "..\\ASSIGNMENT_2\\week_5_solution\\object_loader.frag");
 //		points_program = glw->LoadShader("point_sprites.vert", "point_sprites.frag");
 	}
 	catch (exception& e)
@@ -302,6 +302,7 @@ void display()
 	glUniform1ui(colourmodeID, colourmode);
 	glUniformMatrix4fv(viewID, 1, GL_FALSE, &view[0][0]);
 	glUniformMatrix4fv(projectionID, 1, GL_FALSE, &projection[0][0]);
+	
 
 	// Define the model transformation stack
 	stack<mat4> model;
@@ -312,17 +313,23 @@ void display()
 	model.top() = rotate(model.top(), -radians(angle_x), vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
 	model.top() = rotate(model.top(), -radians(angle_y), vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
 	model.top() = rotate(model.top(), -radians(angle_z), vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
-
-	/* Draw our object with texture */
-	//glBindTexture(GL_TEXTURE_2D, texID);
-	tiny_obj.drawObject(drawmode);
-	//glBindTexture(GL_TEXTURE_2D, 0);
-
+	
+																		 // Send our uniforms variables to the currently bound shader,
+	
 
 	// Draw our cube
 	model.push(model.top());
 	{
-		model.top() = translate(model.top(), vec3(x + 0.5, y, z));
+		//model.top() = translate(model.top(), vec3(x + 0.5, y, z));
+
+		/* Draw our object with texture */
+		glBindTexture(GL_TEXTURE_2D, texID);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		// draw the object
+		glUniformMatrix4fv(modelID, 1, GL_FALSE, &model.top()[0][0]);
+		tiny_obj.drawObject(drawmode);
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 	}
 	model.pop();
