@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="week_5_solution\lab5solution.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="week_5_solution\points.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="week_5_solution\sphere_tex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="week_5_solution\cube_tex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="week_5_solution\quad_tex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="week_5_solution\wrapper_glfw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="week_5_solution\tiny_loader_texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="week_5_solution\lab5solution.frag" />
+    <None Include="week_5_solution\lab5solution.vert" />
+    <None Include="week_5_solution\point_sprites.frag" />
+    <None Include="week_5_solution\point_sprites.vert" />
+    <None Include="week_5_solution\point_sprites_analytic.frag" />
+    <None Include="week_5_solution\object_loader_texture.frag" />
+    <None Include="week_5_solution\object_loader_texture.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="week_5_solution\points.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="week_5_solution\sphere_tex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="week_5_solution\cube_tex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="week_5_solution\quad_tex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="week_5_solution\wrapper_glfw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="week_5_solution\tiny_loader_texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="week_5_solution\readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="week_5_solution\earth_no_clouds.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="week_5_solution\grass.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="week_5_solution\ground1.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="week_5_solution\star.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
