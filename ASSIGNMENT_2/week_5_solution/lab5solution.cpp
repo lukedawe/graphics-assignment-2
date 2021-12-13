@@ -366,10 +366,10 @@ void display()
 		glUseProgram(terrain_program);
 
 		// Send our common uniforms variables to the currently bound shader,
-		glUniform1ui(colourmodeID, colourmode);
-		glUniformMatrix4fv(viewID, 1, GL_FALSE, &view[0][0]);
-		glUniformMatrix4fv(projectionID, 1, GL_FALSE, &projection[0][0]);
-		glUniformMatrix4fv(modelID, 1, GL_FALSE, &model.top()[0][0]);
+		glUniform1ui(terrain_colourmodeID, colourmode);
+		glUniformMatrix4fv(terrain_viewID, 1, GL_FALSE, &view[0][0]);
+		glUniformMatrix4fv(terrain_projectionID, 1, GL_FALSE, &projection[0][0]);
+		glUniformMatrix4fv(terrain_modelID, 1, GL_FALSE, &model.top()[0][0]);
 
 		// Draw our quad
 		heightfield->drawObject(drawmode);

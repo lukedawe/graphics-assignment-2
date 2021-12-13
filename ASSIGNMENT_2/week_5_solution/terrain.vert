@@ -39,7 +39,7 @@ void main()
 	ambient = diffuse_colour * 0.2;
 
 	mat4 mv_matrix = view * model;
-	mat3 normalmatrix = mat3(mv_matrix);
+	mat3 normalmatrix = transpose(inverse(mat3(mv_matrix)));
 	vec3 N = mat3(mv_matrix) * normal;
 	N = normalize(N);
 	light_dir = normalize(light_dir);
