@@ -188,7 +188,7 @@ void init(GLWrapper* glw)
 	// for per-fragment lighting
 	emitmode = 0;
 	fogmode = 0;
-	light_x = 0; light_y = 0; light_z = 0;
+	light_x = 1; light_y = 1; light_z = 1;
 
 	// Generate index (name) for one vertex array object
 	glGenVertexArrays(1, &vao);
