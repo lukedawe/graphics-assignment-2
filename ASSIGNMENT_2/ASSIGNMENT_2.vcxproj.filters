@@ -48,6 +48,8 @@
     <None Include="week_5_solution\point_sprites_analytic.frag" />
     <None Include="week_5_solution\terrain.frag" />
     <None Include="week_5_solution\terrain.vert" />
+    <None Include="week_5_solution\sky_sphere.frag" />
+    <None Include="week_5_solution\sky_sphere.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="week_5_solution\points.h">

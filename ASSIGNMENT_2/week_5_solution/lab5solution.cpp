@@ -4,7 +4,7 @@
  Includes rotation, scaling, translation, view and perspective transformations,
  Objects have normals,colours and texture coordinates defined
  for all vertices.
- Iain Martin November 2021
+ Luke Dawe December 2021
 */
 
 /* Link to static libraries, could define these as linker inputs in the project settings instead
@@ -56,6 +56,7 @@ GLuint program;		/* Identifier for the main shader prgoram */
 GLuint points_program;		/* Identifier for the point_sprites shader prgoram */
 GLuint obj_ldr_program;
 GLuint terrain_program;
+GLuint sky_program;
 
 GLuint vao;			/* Vertex array (Containor) object. This is the index of the VAO that will be the container for
 					   our buffer objects */
@@ -69,13 +70,11 @@ GLuint numlats, numlongs;	//Define the resolution of the sphere object
 
 /* Uniforms*/
 GLuint modelID, viewID, projectionID, colourmodeID; // uniforms for lighting shaders
+GLuint terrain_modelID, terrain_viewID, terrain_projectionID, terrain_colourmodeID; // uniforms for lighting shaders
+GLuint sky_viewID, sky_projectionID, sky_modelID; // uniforms for sky lighting shaders
 GLuint points_modelID, points_viewID, points_projectionID, points_sizeID; // Uniforms for the points shaders
 GLuint lightposID, normalmatrixID;
 GLuint emitmodeID, fogmodeID;
-
-
-/* Uniforms*/
-GLuint terrain_modelID, terrain_viewID, terrain_projectionID, terrain_colourmodeID; // uniforms for lighting shaders
 
 
 GLfloat aspect_ratio;		/* Aspect ratio of the window defined in the reshape callback*/
@@ -179,7 +178,7 @@ void init(GLWrapper* glw)
 	z = 0;
 	angle_x = angle_y = angle_z = 0;
 	angle_inc_x = angle_inc_y = angle_inc_z = 0;
-	scaler = 1.f;
+	scaler = 0.0125f;
 	aspect_ratio = 1.3333f;
 	colourmode = 0;
 	numlats = 100;		// Number of latitudes in our sphere
@@ -198,9 +197,9 @@ void init(GLWrapper* glw)
 
 	/* Create the heightfield object */
 	octaves = 2;
-	perlin_scale = 2.f;
-	perlin_frequency = 1.f;
-	land_size = 40.f;
+	perlin_scale = 1.f;
+	perlin_frequency = 1.5f;
+	land_size = 100.f;
 	heightfield = new terrain_object(octaves, perlin_frequency, perlin_scale);
 	heightfield->createTerrain(200, 200, land_size, land_size);
 	heightfield->createObject();
@@ -217,7 +216,8 @@ void init(GLWrapper* glw)
 		program = glw->LoadShader("..\\ASSIGNMENT_2\\week_5_solution\\lab5solution.vert", "..\\ASSIGNMENT_2\\week_5_solution\\lab5solution.frag");
 		points_program = glw->LoadShader("..\\ASSIGNMENT_2\\week_5_solution\\point_sprites.vert", "..\\ASSIGNMENT_2\\week_5_solution\\point_sprites_analytic.frag");
 		terrain_program = glw->LoadShader("..\\ASSIGNMENT_2\\week_5_solution\\terrain.vert", "..\\ASSIGNMENT_2\\week_5_solution\\terrain.frag");
-//		points_program = glw->LoadShader("point_sprites.vert", "point_sprites.frag");
+		sky_program = glw->LoadShader("..\\ASSIGNMENT_2\\week_5_solution\\sky_sphere.vert", "..\\ASSIGNMENT_2\\week_5_solution\\sky_sphere.frag");
+		//		points_program = glw->LoadShader("point_sprites.vert", "point_sprites.frag");
 	}
 	catch (exception& e)
 	{
@@ -246,6 +246,13 @@ void init(GLWrapper* glw)
 	terrain_colourmodeID = glGetUniformLocation(terrain_program, "colourmode");
 	terrain_viewID = glGetUniformLocation(terrain_program, "view");
 	terrain_projectionID = glGetUniformLocation(terrain_program, "projection");
+
+	/* Define uniforms to send to main program shaders */
+	// sky_modelID = glGetUniformLocation(sky_program, "model");
+	sky_viewID = glGetUniformLocation(sky_program, "view");
+	sky_projectionID = glGetUniformLocation(sky_program, "projection");
+	sky_modelID = glGetUniformLocation(sky_program, "model");
+
 
 	/* Define uniforms to send to point sprites program shaders */
 	points_modelID = glGetUniformLocation(points_program, "model");
@@ -358,7 +365,7 @@ void display()
 	
 																		 // Send our uniforms variables to the currently bound shader,
 
-	// Draw our tree
+	// Draw our terrain
 	model.push(model.top());
 	{
 		// Now draw our particles
@@ -374,6 +381,28 @@ void display()
 		// Draw our quad
 		heightfield->drawObject(drawmode);
 	}
+	model.pop();
+	
+	// Draw our sky-sphere
+	model.push(model.top());
+	{
+		model.top() = scale(model.top(), vec3(500.f, 500.f, 500.f));
+
+		// Now draw our particles
+		/* switch to the terrain shader program current */
+		glUseProgram(sky_program);
+
+		// Send our common uniforms variables to the currently bound shader,
+		glBindTexture(GL_TEXTURE_2D, textureID2);
+		glUniformMatrix4fv(sky_viewID, 1, GL_FALSE, &view[0][0]);
+		glUniformMatrix4fv(sky_projectionID, 1, GL_FALSE, &projection[0][0]);
+		glUniformMatrix4fv(sky_modelID, 1, GL_FALSE, &model.top()[0][0]);
+				
+		// Draw our shape
+		sphere.drawSphere(drawmode);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+	model.pop();
 
 
 

@@ -34,6 +34,8 @@
     <None Include="week_5_solution\point_sprites.frag" />
     <None Include="week_5_solution\point_sprites.vert" />
     <None Include="week_5_solution\point_sprites_analytic.frag" />
+    <None Include="week_5_solution\sky_sphere.frag" />
+    <None Include="week_5_solution\sky_sphere.vert" />
     <None Include="week_5_solution\terrain.frag" />
     <None Include="week_5_solution\terrain.vert" />
   </ItemGroup>

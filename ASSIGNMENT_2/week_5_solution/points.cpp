@@ -40,8 +40,8 @@ void  points::create()
 	{
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		std::uniform_real_distribution<> disxz(-20.0, 20.0);
-		std::uniform_real_distribution<> disy(-20.0, 20.0);
+		std::uniform_real_distribution<> disxz(-50.0, 50.0);
+		std::uniform_real_distribution<> disy(-50.0, 50.0);
 		std::uniform_real_distribution<> disv(-0.005, -0.00025);
 
 		vertices[i] = glm::vec3(disxz(gen), disy(gen), disxz(gen));
@@ -91,10 +91,6 @@ void points::animate()
 
 		// If we are near the origin then we introduce a new random direction
 		if (dist < 0.01f) vertices[i].y = 20.f;
-
-		// If we are too far away then change direction back to the origin
-		//if (dist > 0.01f) velocity[i].y = -vertices[i].y / 500.f * speed;
-		//if (dist > 0.01f) vertices[i].y = vertices[i].y - 0.1f;
 	}
 
 
