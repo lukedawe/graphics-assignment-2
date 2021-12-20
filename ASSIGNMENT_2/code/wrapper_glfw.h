@@ -1,9 +1,7 @@
 /**
 wrapper_glfw.h
- Modified from the OpenGL GLFW example to provide a wrapper GLFW class
-  and to include shader loader functions to include shaders as text files.
-  This version has been modified to build geometry shaders as well as vertex and fragment.
-  Iain Martin November 2018
+Modified from the OpenGL GLFW example to provide a wrapper GLFW class
+Iain Martin August 2014
 */
 #pragma once
 
@@ -21,10 +19,7 @@ private:
 	int height;
 	const char *title;
 	double fps;
-	void(*error_callback)(int error, const char* description);
 	void(*renderer)();
-	void(*reshape)(GLFWwindow* window, int w, int h);
-	void(*keyCallBack)(GLFWwindow* window, int key, int scancode, int action, int mods);
 	bool running;
 	GLFWwindow* window;
 
@@ -36,6 +31,8 @@ public:
 		this->fps = fps;
 	}
 
+	void DisplayVersion();
+
 	/* Callback registering functions */
 	void setRenderer(void(*f)());
 	void setReshapeCallback(void(*f)(GLFWwindow* window, int w, int h));
@@ -43,8 +40,7 @@ public:
 	void setErrorCallback(void(*f)(int error, const char* description));
 
 	/* Shader load and build support functions */
-	GLuint LoadShader(const char *vertex_path, const char *fragment_path,
-		const char *geometry_path = NULL);
+	GLuint LoadShader(const char *vertex_path, const char *fragment_path);
 	GLuint BuildShader(GLenum eShaderType, const std::string &shaderText);
 	GLuint BuildShaderProgram(std::string vertShaderStr, std::string fragShaderStr);
 	std::string readFile(const char *filePath);

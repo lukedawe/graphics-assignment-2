@@ -19,43 +19,48 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="week_5_solution\cube_tex.cpp" />
-    <ClCompile Include="week_5_solution\lab5solution.cpp" />
-    <ClCompile Include="week_5_solution\points.cpp" />
-    <ClCompile Include="week_5_solution\quad_tex.cpp" />
-    <ClCompile Include="week_5_solution\sphere_tex.cpp" />
-    <ClCompile Include="week_5_solution\terrain_object.cpp" />
-    <ClCompile Include="week_5_solution\tiny_loader.cpp" />
-    <ClCompile Include="week_5_solution\wrapper_glfw.cpp" />
+    <ClCompile Include="code\cube_tex.cpp" />
+    <ClCompile Include="code\lab5solution.cpp" />
+    <ClCompile Include="code\points.cpp" />
+    <ClCompile Include="code\sphere_tex.cpp" />
+    <ClCompile Include="code\terrain_object.cpp" />
+    <ClCompile Include="code\tiny_loader.cpp" />
+    <ClCompile Include="code\wrapper_glfw.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="week_5_solution\lab5solution.frag" />
-    <None Include="week_5_solution\lab5solution.vert" />
-    <None Include="week_5_solution\point_sprites.frag" />
-    <None Include="week_5_solution\point_sprites.vert" />
-    <None Include="week_5_solution\point_sprites_analytic.frag" />
-    <None Include="week_5_solution\sky_sphere.frag" />
-    <None Include="week_5_solution\sky_sphere.vert" />
-    <None Include="week_5_solution\terrain.frag" />
-    <None Include="week_5_solution\terrain.vert" />
+    <ClInclude Include="code\cube_tex.h" />
+    <ClInclude Include="code\points.h" />
+    <ClInclude Include="code\sphere_tex.h" />
+    <ClInclude Include="code\terrain_object.h" />
+    <ClInclude Include="code\tiny_loader.h" />
+    <ClInclude Include="code\tiny_loader_texture.h" />
+    <ClInclude Include="code\tiny_obj_loader.h" />
+    <ClInclude Include="code\wrapper_glfw.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="week_5_solution\cube_tex.h" />
-    <ClInclude Include="week_5_solution\points.h" />
-    <ClInclude Include="week_5_solution\quad_tex.h" />
-    <ClInclude Include="week_5_solution\sphere_tex.h" />
-    <ClInclude Include="week_5_solution\terrain_object.h" />
-    <ClInclude Include="week_5_solution\tiny_loader.h" />
-    <ClInclude Include="week_5_solution\wrapper_glfw.h" />
+    <Image Include="code\earth_no_clouds.jpg" />
+    <Image Include="code\grass.jpg" />
+    <Image Include="code\sky.jpg" />
+    <Image Include="code\snowflake.jpg" />
+    <Image Include="code\snowflake.png" />
+    <Image Include="code\star.png" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="week_5_solution\readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="week_5_solution\earth_no_clouds.jpg" />
-    <Image Include="week_5_solution\grass.jpg" />
-    <Image Include="week_5_solution\ground1.jpg" />
-    <Image Include="week_5_solution\star.png" />
+    <None Include="code\fraglight_fog.frag" />
+    <None Include="code\fraglight_fog.vert" />
+    <None Include="code\lab5solution.frag" />
+    <None Include="code\lab5solution.vert" />
+    <None Include="code\object_loader.frag" />
+    <None Include="code\object_loader.vert" />
+    <None Include="code\object_loader_texture.frag" />
+    <None Include="code\object_loader_texture.vert" />
+    <None Include="code\point_sprites.frag" />
+    <None Include="code\point_sprites.vert" />
+    <None Include="code\point_sprites_analytic.frag" />
+    <None Include="code\sky_sphere.frag" />
+    <None Include="code\sky_sphere.vert" />
+    <None Include="code\terrain.frag" />
+    <None Include="code\terrain.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

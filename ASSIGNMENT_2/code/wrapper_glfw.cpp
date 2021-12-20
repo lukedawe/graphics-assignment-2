@@ -1,9 +1,8 @@
 /**
-  wrapper_glfw_geom.cpp
+  wrapper_glfw.cpp
   Modified from the OpenGL GLFW example to provide a wrapper GLFW class
-  and to include shader loader functions to include shaders as text files.
-  This version has been modified to build geometry shaders as well as vertex and fragment.
-  Iain Martin November 2018
+  and to include shader loader functions to include shaders as text files
+  Iain Martin August 2014
   */
 
 #include "wrapper_glfw.h"
@@ -15,7 +14,6 @@
 #include <vector>
 
 using namespace std;
-
 
 /* Constructor for wrapper object */
 GLWrapper::GLWrapper(int width, int height, const char *title) {
@@ -33,11 +31,9 @@ GLWrapper::GLWrapper(int width, int height, const char *title) {
 		exit(EXIT_FAILURE);
 	}
 
-	setErrorCallback(error_callback);
-
-	glfwWindowHint(GLFW_SAMPLES, 4);
+	glfwWindowHint(GLFW_SAMPLES, 8);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #ifdef DEBUG
 	glfwOpenWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
@@ -61,6 +57,9 @@ GLWrapper::GLWrapper(int width, int height, const char *title) {
 		return;
 	}
 
+	/* Can set the Window title at a later time if you wish*/
+	glfwSetWindowTitle(window, "Luke Dawe Assignment 1");
+
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, true);
 }
 
@@ -70,17 +69,28 @@ GLWrapper::~GLWrapper() {
 	glfwTerminate();
 }
 
-/* An error callback function to output GLFW errors*/
-static void error_callback(int error, const char* description)
-{
-	fputs(description, stderr);
-
-}
-
 /* Returns the GLFW window handle, required to call GLFW functions outside this class */
 GLFWwindow* GLWrapper::getWindow()
 {
 	return window;
+}
+
+
+/*
+ * Print OpenGL Version details
+ */
+void GLWrapper::DisplayVersion()
+{
+	/* One way to get OpenGL version*/
+	int major, minor;
+	glGetIntegerv(GL_MAJOR_VERSION, &major);
+	glGetIntegerv(GL_MAJOR_VERSION, &minor);
+	cout << "OpenGL Version = " << major << "." << minor << endl;
+	
+	/* A more detailed way to the version strings*/
+	cout << "Vender: " << glGetString(GL_VENDOR) << endl;
+    cout << "Version:" << glGetString(GL_VERSION) << endl;
+	cout << "Renderer:" << glGetString(GL_RENDERER) << endl;
 }
 
 
@@ -109,7 +119,6 @@ int GLWrapper::eventLoop()
 /* Register an error callback function */
 void GLWrapper::setErrorCallback(void(*func)(int error, const char* description))
 {
-	this->error_callback = func;
 	glfwSetErrorCallback(func);
 }
 
@@ -120,16 +129,14 @@ void GLWrapper::setRenderer(void(*func)()) {
 
 /* Register a callback that runs after the window gets resized */
 void GLWrapper::setReshapeCallback(void(*func)(GLFWwindow* window, int w, int h)) {
-	reshape = func;
-	glfwSetFramebufferSizeCallback(window, reshape);
+	glfwSetFramebufferSizeCallback(window, func);
 }
 
 
 /* Register a callback to respond to keyboard events */
 void GLWrapper::setKeyCallback(void(*func)(GLFWwindow* window, int key, int scancode, int action, int mods))
 {
-	keyCallBack = func;
-	glfwSetKeyCallback(window, keyCallBack);
+	glfwSetKeyCallback(window, func);
 }
 
 
@@ -193,31 +200,24 @@ string GLWrapper::readFile(const char *filePath)
 }
 
 /* Load vertex and fragment shader and return the compiled program */
-GLuint GLWrapper::LoadShader(const char *vertex_path, const char *fragment_path,
-	const char *geometry_path)
+GLuint GLWrapper::LoadShader(const char *vertex_path, const char *fragment_path)
 {
-	GLuint vertShader, fragShader, geomShader;
+	GLuint vertShader, fragShader;
 
 	// Read shaders
 	string vertShaderStr = readFile(vertex_path);
 	string fragShaderStr = readFile(fragment_path);
-
-	string geomShaderStr;
-	if (geometry_path != NULL)	geomShaderStr = readFile(geometry_path);
 
 	GLint result = GL_FALSE;
 	int logLength;
 
 	vertShader = BuildShader(GL_VERTEX_SHADER, vertShaderStr);
 	fragShader = BuildShader(GL_FRAGMENT_SHADER, fragShaderStr);
-	if (geometry_path != NULL) geomShader = BuildShader(GL_GEOMETRY_SHADER, geomShaderStr);
 
 	cout << "Linking program" << endl;
 	GLuint program = glCreateProgram();
 	glAttachShader(program, vertShader);
 	glAttachShader(program, fragShader);
-	if (geometry_path != NULL)	glAttachShader(program, geomShader);
-
 	glLinkProgram(program);
 
 	glGetProgramiv(program, GL_LINK_STATUS, &result);
@@ -228,8 +228,6 @@ GLuint GLWrapper::LoadShader(const char *vertex_path, const char *fragment_path,
 
 	glDeleteShader(vertShader);
 	glDeleteShader(fragShader);
-
-	if (geometry_path != NULL)	glDeleteShader(geomShader);
 
 	return program;
 }
@@ -247,6 +245,7 @@ GLuint GLWrapper::BuildShaderProgram(string vertShaderStr, string fragShaderStr)
 	}
 	catch (exception &e)
 	{
+		cout << "Exception: " << e.what() << endl;
 		throw exception("BuildShaderProgram() Build shader failure. Abandoning");
 	}
 
